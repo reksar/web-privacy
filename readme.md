@@ -1,0 +1,1 @@
+Automatic web privacy summary, based on [webbkoll](https://webbkoll.dataskydd.net/en).
