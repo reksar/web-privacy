@@ -1,4 +1,5 @@
 import selenium.webdriver as Se
+import info
 
 
 class Webbkoll:
@@ -7,6 +8,8 @@ class Webbkoll:
     selector = {
         'url_input': 'input[name="url"]',
         'result': '#results-summary',
+        'given_url': '.url li:first-child > a',
+        'url': '.url li:last-child > a',
         'cookies': '.summary li:nth-child(4) > strong',
     }
 
@@ -41,4 +44,11 @@ class Webbkoll:
         return self.find('result', browser)
 
     def parse_result(self):
-        return self.find('cookies').text
+        given_url = self.find('given_url')
+        given_url = given_url.get_attribute('href')
+        url = self.find('url')
+        url = url.get_attribute('href')
+        cookies = self.find('cookies')
+        cookies = cookies.text
+        cookies = int(cookies)
+        return info.Info(given_url, url, cookies)
