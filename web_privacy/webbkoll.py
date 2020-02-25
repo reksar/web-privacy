@@ -11,7 +11,7 @@ class Webbkoll:
     }
 
     def __init__(self):
-        timeout_sec = 15
+        timeout_sec = 30
         self.browser = Se.Chrome()
         self.wait = Se.support.ui.WebDriverWait(self.browser, timeout_sec)
 
