@@ -3,4 +3,4 @@ import webbkoll
 
 def check(urls):
     checker = webbkoll.Webbkoll()
-    return tuple(map(checker.check, urls))
+    return map(checker.check, urls)

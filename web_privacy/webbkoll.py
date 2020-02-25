@@ -19,7 +19,10 @@ class Webbkoll:
         self.wait = Se.support.ui.WebDriverWait(self.browser, timeout_sec)
 
     def __del__(self):
-        self.browser.quit()
+        try:
+            self.browser.quit()
+        except ImportError:
+            pass
 
     def find(self, selector_name, dom=None):
         selector = Webbkoll.selector[selector_name]

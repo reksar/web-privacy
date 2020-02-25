@@ -1,4 +1,5 @@
 import privacy
+import report
 
 
 urls = (
@@ -8,5 +9,7 @@ urls = (
     'https://yahoo.com',
 )
 
-info = privacy.check(urls)
-print(info)
+infolist = privacy.check(urls)
+issues = report.issues(infolist)
+for issue in issues:
+    print(issue.url, issue.cookies)
