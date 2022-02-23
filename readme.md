@@ -1,1 +1,3 @@
-Automatic summary of web privacy, based on [webbkoll](https://webbkoll.dataskydd.net/en).
+# Web privacy
+
+Summary of web privacy, based on [webbkoll](https://webbkoll.dataskydd.net/en).
