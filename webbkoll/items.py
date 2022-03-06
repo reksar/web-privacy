@@ -1,12 +1,15 @@
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
-
-import scrapy
+from scrapy import Item, Field
 
 
-class WebbkollItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+# TODO: add link to the summary web page
+# TODO: split first- and third-party cookies
+# TODO: split requests and hosts count
+class SummaryItem(Item):
+    checked_url = Field()
+    final_url = Field()
+    ip = Field()
+    default_https = Field()
+    cookies = Field()
+    aside_requests = Field()
+    csp = Field()
+    referrer_policy = Field()
