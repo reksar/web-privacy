@@ -1,4 +1,5 @@
 import re
+from urllib import response
 from scrapy.loader import ItemLoader
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
@@ -29,14 +30,18 @@ class SummaryLoader(ItemLoader):
         self.context.update(response=response)
 
     def populate(self):
-        self.add_css('checked_url', '.url li:first-child a::text')
-        self.add_css('final_url', '.url li:last-child a::text')
-        self.add_css('ip', summary_li(6), find(IP))
-        self.add_css('default_https', summary_li(1), is_success)
-        self.add_css('cookies', summary_li(4), find(COUNT))
-        self.add_css('aside_requests', summary_li(5), find(COUNT))
-        self.add_css('csp', summary_li(2), is_success)
-        self.add_css('referrer_policy', summary_li(3), is_success)
+        self.add_value('summary_url', self.context['response'].url)
+        for args in (
+            ('checked_url', '.url li:first-child a::text'),
+            ('final_url', '.url li:last-child a::text'),
+            ('ip', summary_li(6), find(IP)),
+            ('default_https', summary_li(1), is_success),
+            ('cookies', summary_li(4), find(COUNT)),
+            ('aside_requests', summary_li(5), find(COUNT)),
+            ('csp', summary_li(2), is_success),
+            ('referrer_policy', summary_li(3), is_success),
+        ):
+            self.add_css(*args)
 
 
 def summary_li(idx):
