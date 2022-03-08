@@ -1,11 +1,11 @@
 import re
-from urllib import response
-from scrapy.loader import ItemLoader
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 from itemloaders.processors import TakeFirst
-from webbkoll.items import SummaryItem
 from w3lib.html import remove_tags
+
+from .data_class import DataclassLoader
+from webbkoll.items import SummaryItem
 
 
 LF = '\n'
@@ -15,8 +15,8 @@ IP = '.'.join(['\d{1,3}'] * 4)
 COUNT = '\d.*'
 
 
-class SummaryLoader(ItemLoader):
-    default_item_class = SummaryItem
+class SummaryLoader(DataclassLoader):
+    data_class = SummaryItem
     default_output_processor = TakeFirst()
 
     def __call__(self, response):

@@ -1,15 +1,16 @@
-from scrapy import Item, Field
+from dataclasses import dataclass
 
 
 # TODO: split first- and third-party cookies
 # TODO: split requests and hosts count
-class SummaryItem(Item):
-    summary_url = Field()
-    checked_url = Field()
-    final_url = Field()
-    ip = Field()
-    default_https = Field()
-    cookies = Field()
-    aside_requests = Field()
-    csp = Field()
-    referrer_policy = Field()
+@dataclass(frozen=True)
+class SummaryItem:
+    summary_url: str
+    checked_url: str
+    final_url: str
+    ip: str
+    default_https: bool
+    cookies: str
+    aside_requests: str
+    csp: bool
+    referrer_policy: bool
