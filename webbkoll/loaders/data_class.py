@@ -1,3 +1,4 @@
+from itemloaders.processors import TakeFirst
 from scrapy.loader import ItemLoader
 
 
@@ -9,6 +10,8 @@ class DataclassLoader(ItemLoader):
     This loader allows to keep dataclasses pure and frozen.
     See `items.py`.
     """
+
+    default_output_processor = TakeFirst()
 
     # The `ItemLoader` uses a mutable dicts under the hood.
     default_item_class = dict
