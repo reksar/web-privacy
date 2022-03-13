@@ -8,7 +8,12 @@ class CookiesItem:
     total: int
 
 
-# TODO: split requests and hosts count
+@dataclass(frozen=True)
+class AsideRequestsItem:
+    requests: int
+    hosts: int
+
+
 @dataclass(frozen=True)
 class SummaryItem:
     summary_url: str
@@ -17,6 +22,6 @@ class SummaryItem:
     ip: str
     default_https: bool
     cookies: CookiesItem
-    aside_requests: str
+    aside_requests: AsideRequestsItem
     csp: bool
     referrer_policy: bool

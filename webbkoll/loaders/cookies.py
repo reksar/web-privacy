@@ -13,6 +13,12 @@ TOTAL = '(\d+)\s*\('
 # For all of the above patterns
 MATCH_GROUP = 1
 
+# TODO: nested loader
+# Selector for the 4th <li> tag that contains the line of format
+# '<total> (<x> first-party; <y> third-party)',
+# but polluted with other HTML tags.
+li = summary_li(4)
+
 
 # TODO: Callable loader class
 class CookiesLoader(DataclassLoader):
@@ -29,12 +35,6 @@ class CookiesLoader(DataclassLoader):
         self.context.update(response=response)
 
     def populate(self):
-
-        # Selector for the 4th <li> tag that contains the line of format
-        # '<total> (<x> first-party; <y> third-party)',
-        # but polluted with other HTML tags.
-        li = summary_li(4)
-
         self.add_css('first_party', li, find(FIRST_PARTY, MATCH_GROUP))
         self.add_css('third_party', li, find(THIRD_PARTY, MATCH_GROUP))
         self.add_css('total', li, find(TOTAL, MATCH_GROUP))

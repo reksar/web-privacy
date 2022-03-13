@@ -16,13 +16,17 @@ def summary_li(idx):
 def take_first(f):
     return lambda values: f(TAKE_FIRST(values))
 
-def find(pattern, group=0):
+def find(pattern, group=0, default=''):
 
     @take_first
     def find_in(value: str):
-        line = sanitize(value)
-        match = re.search(pattern, line)
-        return match.group(group) if match else ''
+        try:
+            line = sanitize(value)
+            match = re.search(pattern, line)
+            return match.group(group)
+
+        except (AttributeError, IndexError):
+            return default
 
     return find_in
 
