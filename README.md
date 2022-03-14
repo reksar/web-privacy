@@ -2,4 +2,9 @@
 
 Summary of web privacy, based on [webbkoll](https://webbkoll.dataskydd.net/en).
 
-Using: `make`
+
+## Using
+
+`make install` - on first run
+
+`make`
