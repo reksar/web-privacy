@@ -21,6 +21,7 @@ def find(pattern, group=0, default=''):
     @take_first
     def find_in(value: str):
         try:
+            # TODO: sanitize anywhere else?
             line = sanitize(value)
             match = re.search(pattern, line)
             return match.group(group)

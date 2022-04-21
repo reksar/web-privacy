@@ -12,6 +12,8 @@ BOT_NAME = 'webbkoll'
 SPIDER_MODULES = ['webbkoll.spiders']
 NEWSPIDER_MODULE = 'webbkoll.spiders'
 
+WEBBKOLL_URL = 'https://webbkoll.dataskydd.net'
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'webbkoll (+http://www.yourdomain.com)'
@@ -50,9 +52,11 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'webbkoll.middlewares.WebbkollDownloaderMiddleware': 543,
-#}
+RETRY_TIMES = 5
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+    'webbkoll.middlewares.ResultsRetry': 543,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

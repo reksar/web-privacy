@@ -7,7 +7,7 @@ VENV_ACTIVATE := . venv/bin/activate
 define venv_activate =
   if [ -z $$VIRTUAL_ENV ]
   then
-    echo WARN: auxiliary \'$(VENV_ACTIVATE)\'
+    echo WARN: use \'$(VENV_ACTIVATE)\'
     $(VENV_ACTIVATE)
   fi
 endef

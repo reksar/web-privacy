@@ -21,6 +21,7 @@ li = summary_li(4)
 
 
 # TODO: Callable loader class
+# FIXME: Error on Cookies: 0
 class CookiesLoader(DataclassLoader):
     data_class = CookiesItem
 
