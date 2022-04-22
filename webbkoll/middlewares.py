@@ -1,72 +1,26 @@
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+# A `Spider*` class - is a spider middleware.
+# See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+#
+# A `Downloader*` - is a downloader middleware.
+# See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 
 import re
 import time
 from http import HTTPStatus
-from scrapy import signals
+from scrapy.http import Request, Response, FormRequest
 from scrapy.downloadermiddlewares.retry import RetryMiddleware as ScrapyRetry
-from webbkoll.settings import WEBBKOLL_URL
+from webbkoll.settings import WEBBKOLL_URL, RETRY_AFTER_SECONDS
 
 
-class WebbkollSpiderMiddleware:
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the spider middleware does not modify the
-    # passed objects.
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
-        s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
-        return s
-
-    def process_spider_input(self, response, spider):
-        # Called for each response that goes through the spider
-        # middleware and into the spider.
-
-        # Should return None or raise an exception.
-        return None
-
-    def process_spider_output(self, response, result, spider):
-        # Called with the results returned from the Spider, after
-        # it has processed the response.
-
-        # Must return an iterable of Request, or item objects.
-        for i in result:
-            yield i
-
-    def process_spider_exception(self, response, exception, spider):
-        # Called when a spider or process_spider_input() method
-        # (from other spider middleware) raises an exception.
-
-        # Should return either None or an iterable of Request or item objects.
-        pass
-
+class SpiderCheckUrlRequest:
     def process_start_requests(self, start_requests, spider):
-        # Called with the start requests of the spider, and works
-        # similarly to the process_spider_output() method, except
-        # that it doesn’t have a response associated.
-
-        # Must return only requests (not items).
-        for r in start_requests:
-            yield r
-
-    def spider_opened(self, spider):
-        spider.logger.info('Spider opened: %s' % spider.name)
+        # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html#scrapy.spidermiddlewares.SpiderMiddleware.process_start_requests
+        yield from map(preload_webbkoll_form, start_requests)
 
 
-class ResultsRetry(ScrapyRetry):
-
-    INTERVAL_SECONDS = 7
-
+class DownloaderRetryResults(ScrapyRetry):
     def process_response(self, request, response, spider):
         """
-        Override from base class. Must either:
-        - return a Response object
-        - return a Request object
-        - or raise IgnoreRequest
-
         After submitting the Webbkoll form to check an URL, it redirects to a
         `status` resourse "https://webbkoll.dataskydd.net/en/status?id=<...>".
 
@@ -77,26 +31,44 @@ class ResultsRetry(ScrapyRetry):
         Once the check is complete, you will get 302 redirect to `results`
         "https://webbkoll.dataskydd.net/en/results?url=<...>".
 
-        A `results` will be cached, so you may get 302 redirect immediately.
+        You may get 302 redirect immediately if `results` is cached.
         """
-        if request.meta.get('dont_retry', False):
-            return response
-
         if still_status(response):
             # Retry if response is a `status` resource and redirect to a
             # `results` is not ready. This prevents the spider from parsing
             # the `status` page instead of `results`.
             reason = 'Redirect to results is not ready.'
-            time.sleep(self.INTERVAL_SECONDS)
+            time.sleep(RETRY_AFTER_SECONDS)
             return self._retry(request, reason, spider) or response
 
         return response
 
 
 def still_status(response):
-    # When redirect to results is not ready.
+    # When redirect to `results` is not ready got `status`.
     return is_status_url(response.url) and HTTPStatus.OK == response.status
 
 def is_status_url(url):
-    # "https://webbkoll.dataskydd.net/en/status?id=<...>"
+    # URL like "https://webbkoll.dataskydd.net/en/status?id=<...>"
+    # Matches "https://webbkoll.dataskydd.net/<word>/status"
     return re.match(rf'{WEBBKOLL_URL}/\w+/status', url)
+
+def preload_webbkoll_form(request):
+    """
+    See https://docs.scrapy.org/en/latest/topics/request-response.html#scrapy.http.Request.replace
+
+    Instead of requesting the `request.url`, request the `WEBBKOLL_URL` to get
+    the Webbkoll form with actual CSRF token. Then submit that form with the
+    given `request.url`.
+    """
+    return request.replace(
+        url=WEBBKOLL_URL,
+        callback=submit_webbkoll_form,
+        cb_kwargs={'url': request.url},
+        dont_filter=True)
+
+def submit_webbkoll_form(webbkoll_form: Response, **formdata: dict) -> Request:
+    return FormRequest.from_response(
+        webbkoll_form,
+        formdata=formdata,
+        dont_filter=True)

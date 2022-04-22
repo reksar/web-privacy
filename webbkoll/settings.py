@@ -27,7 +27,7 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 1
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -46,16 +46,17 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'webbkoll.middlewares.WebbkollSpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+    'webbkoll.middlewares.SpiderCheckUrlRequest': 543,
+}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-RETRY_TIMES = 5
+RETRY_TIMES = 6
+RETRY_AFTER_SECONDS = 5
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
-    'webbkoll.middlewares.ResultsRetry': 543,
+    'webbkoll.middlewares.DownloaderRetryResults': 543,
 }
 
 # Enable or disable extensions
