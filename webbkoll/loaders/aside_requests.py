@@ -1,4 +1,3 @@
-from scrapy.selector import Selector
 from webbkoll.items import AsideRequestsItem
 from webbkoll.loaders.cookies import MATCH_GROUP
 from .data_class import DataclassLoader
@@ -17,20 +16,10 @@ MATCH_GROUP = 1
 li = summary_li(5)
 
 
-# TODO: Callable loader class
+# FIXME: parse Third-party requests: 0
 class AsideRequestsLoader(DataclassLoader):
     data_class = AsideRequestsItem
 
-    def __call__(self, response):
-        self.update(response)
-        self.populate()
-        return self.load_item()
-
-    def update(self, response):
-        self.selector = Selector(response=response)
-        self.context.update(selector=self.selector)
-        self.context.update(response=response)
-
     def populate(self):
-        self.add_css('requests', li, find(REQUESTS, MATCH_GROUP))
-        self.add_css('hosts', li, find(HOSTS, MATCH_GROUP))
+        self.replace_css('requests', li, find(REQUESTS, MATCH_GROUP))
+        self.replace_css('hosts', li, find(HOSTS, MATCH_GROUP))

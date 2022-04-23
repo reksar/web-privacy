@@ -1,4 +1,3 @@
-from scrapy.selector import Selector
 from webbkoll.items import CookiesItem
 from .data_class import DataclassLoader
 from .common import summary_li, find
@@ -20,22 +19,11 @@ MATCH_GROUP = 1
 li = summary_li(4)
 
 
-# TODO: Callable loader class
-# FIXME: Error on Cookies: 0
+# FIXME: parse Cookies: 0
 class CookiesLoader(DataclassLoader):
     data_class = CookiesItem
 
-    def __call__(self, response):
-        self.update(response)
-        self.populate()
-        return self.load_item()
-
-    def update(self, response):
-        self.selector = Selector(response=response)
-        self.context.update(selector=self.selector)
-        self.context.update(response=response)
-
     def populate(self):
-        self.add_css('first_party', li, find(FIRST_PARTY, MATCH_GROUP))
-        self.add_css('third_party', li, find(THIRD_PARTY, MATCH_GROUP))
-        self.add_css('total', li, find(TOTAL, MATCH_GROUP))
+        self.replace_css('first_party', li, find(FIRST_PARTY, MATCH_GROUP))
+        self.replace_css('third_party', li, find(THIRD_PARTY, MATCH_GROUP))
+        self.replace_css('total', li, find(TOTAL, MATCH_GROUP))

@@ -1,4 +1,3 @@
-from scrapy.selector import Selector
 from webbkoll.items import SummaryItem
 from .data_class import DataclassLoader
 from .cookies import CookiesLoader
@@ -9,19 +8,8 @@ from .common import summary_li, find, take_first, html
 IP = '.'.join(['\d{1,3}'] * 4)
 
 
-# TODO: Callable loader class
 class SummaryLoader(DataclassLoader):
     data_class = SummaryItem
-
-    def __call__(self, response):
-        self.update(response)
-        self.populate()
-        return self.load_item()
-
-    def update(self, response):
-        self.selector = Selector(response=response)
-        self.context.update(selector=self.selector)
-        self.context.update(response=response)
 
     def populate(self):
         response = self.context['response']
@@ -31,7 +19,7 @@ class SummaryLoader(DataclassLoader):
             ('cookies', response, CookiesLoader()),
             ('aside_requests', response, AsideRequestsLoader()),
         ):
-            self.add_value(*args)
+            self.replace_value(*args)
 
         for args in (
             ('checked_url', '.url li:first-child a::text'),
@@ -41,7 +29,7 @@ class SummaryLoader(DataclassLoader):
             ('csp', summary_li(2), is_success),
             ('referrer_policy', summary_li(3), is_success),
         ):
-            self.add_css(*args)
+            self.replace_css(*args)
 
 
 @take_first
