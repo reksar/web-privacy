@@ -1,6 +1,6 @@
 from webbkoll.items import AsideRequestsItem
 from webbkoll.loaders.cookies import MATCH_GROUP
-from .data_class import DataclassLoader
+from .dataclass import DataclassLoader
 from .common import summary_li, find
 
 
@@ -18,6 +18,7 @@ li = summary_li(5)
 
 # FIXME: parse Third-party requests: 0
 class AsideRequestsLoader(DataclassLoader):
+
     data_class = AsideRequestsItem
 
     def populate(self):

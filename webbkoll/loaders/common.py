@@ -1,7 +1,7 @@
 import re
 from w3lib.html import remove_tags
 from itemloaders.processors import TakeFirst
-from scrapy.http import HtmlResponse
+from scrapy.selector import Selector
 
 
 LF = '\n'
@@ -10,31 +10,32 @@ MULTISPACE = '\s{2,}'
 TAKE_FIRST = TakeFirst()
 
 
-def summary_li(idx):
-    return f".summary li:nth-child({idx})"
+def summary_li(nth):
+    """
+    Returns the CSS selector for `nth` <li> of the <div.summary> <ul>.
+    """
+    return f".summary li:nth-child({nth})"
 
 def take_first(f):
+    """
+    Decorator for function `f` that takes the first non-empty value `x` from
+    iterable `values` and calls `f(x)` when `f(values)` is called externally.
+    """
     return lambda values: f(TAKE_FIRST(values))
 
-def find(pattern, group=0, default=''):
+def find(pattern, html: Selector, group=0, default=''):
 
-    @take_first
-    def find_in(value: str):
-        try:
-            # TODO: sanitize anywhere else?
-            line = sanitize(value)
-            match = re.search(pattern, line)
-            return match.group(group)
+    try:
+        # TODO: maybe use the `re_first()`?
+        value = html.get()
+        line = sanitize(value)
+        match = re.search(pattern, line)
+        return match.group(group)
 
-        except (AttributeError, IndexError):
-            return default
+    except (AttributeError, IndexError):
+        return default
 
-    return find_in
-
-def sanitize(value: str):
-    txt = remove_tags(value)
+def sanitize(html: str):
+    txt = remove_tags(html)
     line = txt.replace(LF, SPACE)
     return re.sub(MULTISPACE, SPACE, line)
-
-def html(value: str):
-    return HtmlResponse('', body=value, encoding='utf-8')

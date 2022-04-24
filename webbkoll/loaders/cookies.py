@@ -1,5 +1,5 @@
 from webbkoll.items import CookiesItem
-from .data_class import DataclassLoader
+from .dataclass import DataclassLoader
 from .common import summary_li, find
 
 
@@ -21,9 +21,13 @@ li = summary_li(4)
 
 # FIXME: parse Cookies: 0
 class CookiesLoader(DataclassLoader):
+
     data_class = CookiesItem
 
     def populate(self):
         self.replace_css('first_party', li, find(FIRST_PARTY, MATCH_GROUP))
         self.replace_css('third_party', li, find(THIRD_PARTY, MATCH_GROUP))
         self.replace_css('total', li, find(TOTAL, MATCH_GROUP))
+
+    def total(self):
+        return find(self.response)
