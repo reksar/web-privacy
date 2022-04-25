@@ -1,4 +1,5 @@
 import re
+from functools import wraps
 from w3lib.html import remove_tags
 from itemloaders.processors import TakeFirst
 from scrapy.selector import Selector
@@ -39,3 +40,13 @@ def sanitize(html: str):
     txt = remove_tags(html)
     line = txt.replace(LF, SPACE)
     return re.sub(MULTISPACE, SPACE, line)
+
+def select_css(get_css_selector):
+    # Selects value with CSS selector returned from the `loader_method`.
+
+    @wraps(get_css_selector)
+    def select(self):
+        selector = get_css_selector(self)
+        return self._get_cssvalues(selector)
+
+    return select
