@@ -1,37 +1,34 @@
+from w3lib.html import remove_tags
 from webbkoll.items import CookiesItem
 from .dataclass import DataclassLoader
-from .common import find
 
 
-# First number in the parentheses
+"""
+The `response` is expected to contain the 4th <li> of the Webbkoll summary <ul>
+whose inner HTML end with some like:
+    <strong>{total}</strong>
+or
+    <strong>{total}</strong> ({x} first-party; {y} third-party)
+"""
+TOTAL = '<strong>\d+</strong>'
+# The'(' followed by a number.
 FIRST_PARTY = '\((\d+)'
-# Number after the ';'
+# The '; ' followed by a number.
 THIRD_PARTY = ';\s*(\d+)'
-# Number before the parentheses
-TOTAL = '(\d+)\s*\('
-# For all of the above patterns
-MATCH_GROUP = 1
 
 
-# TODO:
 class CookiesLoader(DataclassLoader):
-    """
-    The `response` is expected to contain the 4th <li> of the Webbkoll summary
-    <ul> whose inner HTML end with some like:
-        <strong>{total}</strong>
-    or
-        <strong>{total}</strong> ({x} first-party; {y} third-party)
-    """
 
     @property
     def dataclass(self):
         return CookiesItem
 
     def total(self):
-        return 0
+        # TODO: cache
+        return int(remove_tags(self.selector.re_first(TOTAL)))
 
     def first_party(self):
-        return 0
+        return int(self.selector.re_first(FIRST_PARTY)) if self.total() else 0
 
     def third_party(self):
-        return 0
+        return int(self.selector.re_first(THIRD_PARTY)) if self.total() else 0

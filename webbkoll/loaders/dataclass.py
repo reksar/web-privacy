@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from dataclasses import fields
 from operator import attrgetter as attr
 from scrapy.loader import ItemLoader
-from scrapy.http import HtmlResponse
 from scrapy.selector import Selector
 from itemloaders.processors import TakeFirst
+from .common import html
 
 
 class DataclassHelper(ABC):
@@ -12,7 +12,7 @@ class DataclassHelper(ABC):
     @property
     @abstractmethod
     def dataclass(self):
-        # Should return one of the dataclasses described in `items.py`.
+        # Should return one of the dataclasses defined in `items.py`.
         pass
 
     @property
@@ -67,11 +67,22 @@ class DataclassLoader(ItemLoader, DataclassHelper):
     def load_item(self):
         return self.dataclass(**super().load_item())
 
-    def css_response(self, selector):
+    def css_response(self, query):
         """
-        Instead of `ItemLoader.nested_css()` to pass nested response to
-        loaders with a type other than the original.
+        Builds a `HtmlResponse` from a HTML text selected with the CSS `query`
+        from `self.response`.
+
+        It allows to call a `DataclassLoader` with a nested response similar
+        to `ItemLoader.nested_css()`, but without instantiating the current
+        class.
         """
-        match_list = self.selector.css(selector)
-        first_match = match_list.get()
-        return HtmlResponse('', body=first_match, encoding='utf-8')
+        return html(self.selector.css(query).get())
+
+
+def select_css(get_selector):
+    """
+    Allows to return a CSS selector from `DataclassLoader` methods. Without
+    using `replace_css()` instead of `replace_value()` during
+    `DataclassLoader.populate()` in this case.
+    """
+    return lambda self: self._get_cssvalues(get_selector(self))
