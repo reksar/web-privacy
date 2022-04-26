@@ -1,26 +1,28 @@
+from w3lib.html import remove_tags
 from webbkoll.items import AsideRequestsItem
-from webbkoll.loaders.cookies import MATCH_GROUP
 from .dataclass import DataclassLoader
-from .common import summary_li, find
 
 
-REQUESTS = '(\d+) requests'
-HOSTS = '(\d+) unique hosts'
-# For all of the above patterns
-MATCH_GROUP = 1
+"""
+The `response` is expected to contain the 5th <li> of the Webbkoll summary <ul>
+whose inner HTML end with some like:
+    <strong>{requests}</strong>
+or
+    <strong>{requests}</strong> requests to {hosts} unique hosts
+"""
+REQUESTS = '<strong>\d+</strong>'
+HOSTS = '(\d+) unique host'
 
-# TODO: nested loader
-# Selector for the 5th <li> tag that contains the line of format
-# '<x> requests to <y> unique hosts',
-# but polluted with other HTML tags.
-li = summary_li(5)
 
-
-# FIXME: parse Third-party requests: 0
 class AsideRequestsLoader(DataclassLoader):
 
-    data_class = AsideRequestsItem
+    @property
+    def dataclass(self):
+        return AsideRequestsItem
 
-    def populate(self):
-        self.replace_css('requests', li, find(REQUESTS, MATCH_GROUP))
-        self.replace_css('hosts', li, find(HOSTS, MATCH_GROUP))
+    def requests(self):
+        # TODO: cache
+        return int(remove_tags(self.selector.re_first(REQUESTS)))
+
+    def hosts(self):
+        return int(self.selector.re_first(HOSTS)) if self.requests() else 0

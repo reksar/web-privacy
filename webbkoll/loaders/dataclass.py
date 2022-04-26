@@ -1,37 +1,45 @@
+from abc import ABC, abstractmethod
 from dataclasses import fields
 from operator import attrgetter as attr
-from functools import wraps
 from scrapy.loader import ItemLoader
 from scrapy.selector import Selector
 from itemloaders.processors import TakeFirst
+from .common import html
 
 
-# TODO: make abstract
-class DataclassLoader(ItemLoader):
-    """
-    Using the `ItemLoader` pollutes the dataclass declaration for items.
-    See: https://docs.scrapy.org/en/latest/topics/loaders.html#working-with-dataclass-items
-
-    This loader allows to keep dataclasses pure and frozen.
-    See `items.py`.
-    """
-
-    default_output_processor = TakeFirst()
-
-    # The `ItemLoader` uses a mutable dict under the hood.
-    default_item_class = dict
-
-    # Override it to a dataclass item further.
-    # TODO: make abstract
-    dataclass = dict
+class DataclassHelper(ABC):
 
     @property
-    def response(self):
-        return self.context['response']
+    @abstractmethod
+    def dataclass(self):
+        # Should return one of the dataclasses defined in `items.py`.
+        pass
 
     @property
     def field_names(self):
         yield from map(attr('name'), fields(self.dataclass))
+
+
+class DataclassLoader(ItemLoader, DataclassHelper):
+    """
+    Using the `ItemLoader` pollutes a dataclass declaration for a scrapy item.
+    See: https://docs.scrapy.org/en/latest/topics/loaders.html#working-with-dataclass-items
+
+    This loader allows to keep dataclasses pure and frozen.
+    See `items.py`.
+
+    In subclasses, you must override the `dataclass()` abstract property and
+    define all methods needed to `populate()` objects, see the method below.
+    """
+
+    default_output_processor = TakeFirst()
+
+    # The `ItemLoader` uses mutable dict under the hood.
+    default_item_class = dict
+
+    @property
+    def response(self):
+        return self.context['response']
 
     def __call__(self, response):
         self.update(response)
@@ -45,26 +53,36 @@ class DataclassLoader(ItemLoader):
 
     def populate(self):
         """
-        For each self.<dataclass>.<field_name> calls the self.<field_name>()
-        method to get the field value and store it internally.
+        For each `self.field_names` calls the `self.<field_name>()` method to
+        get the field value and store it internally for loading the item
+        further.
 
-        Use the `replace_value()` not the `add_value()` to the internal list.
+        NOTE: using `replace_value()` instead of `add_value()` keeps the first
+        item of the internal list is actual. So using the `TakeFirst` as the
+        `default_output_processor` works correctly.
         """
         for name in self.field_names:
-            get_value = getattr(self, name)
-            value = get_value()
-            self.replace_value(name, value)
+            self.replace_value(name, getattr(self, name)())
 
     def load_item(self):
         return self.dataclass(**super().load_item())
 
+    def css_response(self, query):
+        """
+        Builds a `HtmlResponse` from a HTML text selected with the CSS `query`
+        from `self.response`.
 
-def select_css(get_css_selector):
-    # Selects value with CSS selector returned from the `loader_method`.
+        It allows to call a `DataclassLoader` with a nested response similar
+        to `ItemLoader.nested_css()`, but without instantiating the current
+        class.
+        """
+        return html(self.selector.css(query).get())
 
-    @wraps(get_css_selector)
-    def select(self):
-        selector = get_css_selector(self)
-        return self._get_cssvalues(selector)
 
-    return select
+def select_css(get_selector):
+    """
+    Allows to return a CSS selector from `DataclassLoader` methods. Without
+    using `replace_css()` instead of `replace_value()` during
+    `DataclassLoader.populate()` in this case.
+    """
+    return lambda self: self._get_cssvalues(get_selector(self))
