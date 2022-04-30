@@ -16,7 +16,7 @@ endef
 .ONESHELL:
 run: venv
 	@$(call venv_activate)
-	scrapy crawl summary --nolog -o -:json
+	scrapy crawl summary --nolog -o -:json -a urls="`cat urls.txt`"
 
 .PHONY: install
 .ONESHELL:

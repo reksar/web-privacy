@@ -7,11 +7,9 @@ class SummarySpider(Spider):
     name = 'summary'
     summary = SummaryLoader()
 
-    start_urls = [
-        'http://smava.de',
-        'https://boyter.org/2016/04/collection-orly-book-covers',
-        'http://docs.python.org',
-    ]
+    def __init__(self, **kwargs):
+        super().__init__(self.name, **kwargs)
+        self.start_urls = kwargs.get('urls', '').split()
 
     def parse(self, response):
         return self.summary(response)
