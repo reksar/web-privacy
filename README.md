@@ -5,8 +5,12 @@ Summary of web privacy, based on [webbkoll](https://webbkoll.dataskydd.net/en).
 
 ## Using
 
-Edit the `urls.txt` or pass the `urls` arg to scrapy (see `Makefile`).
+In common: `./run.sh <list of URLs>`
 
-`make install` - on first run
+Using `urls.txt`:
 
-`make`
+```bash
+./run.sh `cat urls.txt`
+```
+
+Remove `--nolog` to debug.

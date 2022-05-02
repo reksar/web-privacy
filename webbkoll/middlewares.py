@@ -1,7 +1,7 @@
 # A `Spider*` class - is a spider middleware.
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #
-# A `Downloader*` - is a downloader middleware.
+# A `Downloader*` class - is a downloader middleware.
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 
 import re
