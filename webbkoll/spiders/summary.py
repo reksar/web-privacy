@@ -1,6 +1,7 @@
 from scrapy import Spider
 from scrapy.exceptions import DropItem
 from webbkoll.loaders import SummaryLoader
+from webbkoll.items import WebbkollError
 from w3lib.html import remove_tags
 
 
@@ -18,7 +19,11 @@ class SummarySpider(Spider):
         if has_summary(response):
             return self.summary(response)
 
-        raise DropItem(error_message(response))
+        message = error_message(response)
+        if message:
+            return WebbkollError(message)
+
+        raise DropItem('Summary parsing error')
 
 
 def has_summary(response):

@@ -1,5 +1,5 @@
 from w3lib.html import remove_tags
-from webbkoll.items import CookiesItem
+from webbkoll.items import Cookies
 from .dataclass import DataclassLoader
 
 
@@ -21,7 +21,7 @@ class CookiesLoader(DataclassLoader):
 
     @property
     def dataclass(self):
-        return CookiesItem
+        return Cookies
 
     def total(self):
         # TODO: cache

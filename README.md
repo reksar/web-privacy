@@ -2,15 +2,12 @@
 
 Summary of web privacy, based on [webbkoll](https://webbkoll.dataskydd.net/en).
 
-
 ## Using
 
-In common: `./run.sh <list of URLs>`
-
-Using `urls.txt`:
+Pass an URL list to `run.sh`, e.g. using `urls.txt`:
 
 ```bash
-./run.sh `cat urls.txt`
+run.sh `cat urls.txt`
 ```
 
 Remove `--nolog` to debug.

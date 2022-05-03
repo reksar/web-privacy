@@ -1,10 +1,8 @@
 from scrapy.selector import Selector
 from itemloaders.processors import TakeFirst
-from webbkoll.items import SummaryItem
-from .dataclass import DataclassLoader, select_css
-from .cookies import CookiesLoader
-from .aside_requests import AsideRequestsLoader
-from .common import summary_li, find
+from webbkoll.items import Summary
+from .common import summary_li, find, select_css
+from . import DataclassLoader, CookiesLoader, AsideRequestsLoader
 
 
 ASIDE_REQUESTS = AsideRequestsLoader()
@@ -18,7 +16,7 @@ class SummaryLoader(DataclassLoader):
 
     @property
     def dataclass(self):
-        return SummaryItem
+        return Summary
 
     def summary_url(self):
         return self.response.url

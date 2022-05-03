@@ -13,7 +13,7 @@ venv_activate() {
   if [ -z $VIRTUAL_ENV ]
   then
     venv_init
-    local VENV_ACTIVATE=". $VENV/bin/activate"
+    local readonly VENV_ACTIVATE=". $VENV/bin/activate"
     echo WARN: use $VENV_ACTIVATE
     $VENV_ACTIVATE
   fi
@@ -21,7 +21,7 @@ venv_activate() {
 
 install() {
   pip install --upgrade pip
-	pip install -r requirements.txt
+  pip install -r requirements.txt
 }
 
 

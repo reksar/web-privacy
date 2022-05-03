@@ -12,7 +12,7 @@ class DataclassHelper(ABC):
     @property
     @abstractmethod
     def dataclass(self):
-        # Should return one of the dataclasses defined in `items.py`.
+        """Should return one of the dataclasses defined in `items.py`."""
         pass
 
     @property
@@ -77,12 +77,3 @@ class DataclassLoader(ItemLoader, DataclassHelper):
         class.
         """
         return html(self.selector.css(query).get())
-
-
-def select_css(get_selector):
-    """
-    Allows to return a CSS selector from `DataclassLoader` methods. Without
-    using `replace_css()` instead of `replace_value()` during
-    `DataclassLoader.populate()` in this case.
-    """
-    return lambda self: self._get_cssvalues(get_selector(self))

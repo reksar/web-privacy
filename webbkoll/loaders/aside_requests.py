@@ -1,5 +1,5 @@
 from w3lib.html import remove_tags
-from webbkoll.items import AsideRequestsItem
+from webbkoll.items import AsideRequests
 from .dataclass import DataclassLoader
 
 
@@ -18,7 +18,7 @@ class AsideRequestsLoader(DataclassLoader):
 
     @property
     def dataclass(self):
-        return AsideRequestsItem
+        return AsideRequests
 
     def requests(self):
         # TODO: cache
