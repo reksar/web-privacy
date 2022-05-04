@@ -20,6 +20,7 @@ venv_activate() {
 }
 
 install() {
+  export CRYPTOGRAPHY_DONT_BUILD_RUST=1
   pip install --upgrade pip
   pip install -r requirements.txt
 }

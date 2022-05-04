@@ -2,7 +2,7 @@ attrs==21.4.0
 Automat==20.2.0
 cffi==1.15.0
 constantly==15.1.0
-cryptography==36.0.1
+cryptography==3.4.8
 cssselect==1.1.0
 h2==3.2.0
 hpack==3.0.0
@@ -21,7 +21,7 @@ pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21
 PyDispatcher==2.0.5
-pyOpenSSL==22.0.0
+pyOpenSSL==21.0.0
 queuelib==1.6.2
 Scrapy==2.5.1
 service-identity==21.1.0
