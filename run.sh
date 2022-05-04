@@ -20,6 +20,7 @@ venv_activate() {
 }
 
 install() {
+  export CRYPTOGRAPHY_DONT_BUILD_RUST=1
   pip install --upgrade pip
   pip install -r requirements.txt
 }
@@ -32,4 +33,4 @@ then
   install
 fi
 
-scrapy crawl summary --nolog -o -:json -a urls="$*"
+scrapy crawl summary --nolog --output='-:json' -a urls="$*"
