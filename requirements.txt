@@ -23,10 +23,10 @@ pycparser==2.21
 PyDispatcher==2.0.5
 pyOpenSSL==21.0.0
 queuelib==1.6.2
-Scrapy==2.5.1
+Scrapy==2.6.0
 service-identity==21.1.0
 six==1.16.0
-Twisted==22.1.0
+Twisted==22.4.0
 typing-extensions==4.1.1
 w3lib==1.22.0
 zope.interface==5.4.0
