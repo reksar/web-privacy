@@ -1,7 +1,7 @@
 from scrapy.selector import Selector
 from itemloaders.processors import TakeFirst
 from webbkoll.items import Summary
-from .common import summary_li, find, select_css
+from .common import summary_li, select_css
 from . import DataclassLoader, CookiesLoader, AsideRequestsLoader
 
 
@@ -30,7 +30,7 @@ class SummaryLoader(DataclassLoader):
         return '.url li:last-child a::text'
 
     def ip(self):
-        return find(IP, self.summary_li(6))
+        return self.summary_li(6).re_first(IP)
 
     def default_https(self):
         return is_success(self.summary_li(1))
