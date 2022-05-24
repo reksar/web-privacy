@@ -6,11 +6,13 @@ class AsideRequests:
     requests: int
     hosts: int
 
+
 @dataclass(frozen=True)
 class Cookies:
     first_party: int
     third_party: int
     total: int
+
 
 @dataclass(frozen=True)
 class Summary:
@@ -23,6 +25,7 @@ class Summary:
     aside_requests: AsideRequests
     csp: bool
     referrer_policy: bool
+
 
 @dataclass(frozen=True)
 class WebbkollError:

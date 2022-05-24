@@ -1,18 +1,21 @@
-# A `Spider*` class - is a spider middleware.
-# See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#
-# A `Downloader*` class - is a downloader middleware.
-# See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
+"""
+A `Spider*` class - is a spider middleware.
+See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+
+A `Downloader*` class - is a downloader middleware.
+See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
+"""
 
 import re
 import time
 from http import HTTPStatus
 from scrapy.http import Request, Response, FormRequest
-from scrapy.downloadermiddlewares.retry import RetryMiddleware as ScrapyRetry
+from scrapy.downloadermiddlewares.retry import RetryMiddleware
 from webbkoll.settings import WEBBKOLL_URL, RETRY_AFTER_SECONDS
 
 
 class SpiderCheckUrlRequest:
+
     def process_start_requests(self, start_requests, spider):
         """
         Gets `start_requests` based on the `start_urls` from `spider`.
@@ -23,7 +26,8 @@ class SpiderCheckUrlRequest:
         yield from map(preload_webbkoll_form, start_requests)
 
 
-class DownloaderRetryResults(ScrapyRetry):
+class DownloaderRetryResults(RetryMiddleware):
+
     def process_response(self, request, response, spider):
         """
         After submitting the Webbkoll form to check an URL, it redirects to a
@@ -53,10 +57,12 @@ def still_status(response):
     # When redirect to *results* is not ready.
     return is_status_url(response.url) and HTTPStatus.OK == response.status
 
+
 def is_status_url(url):
     # URL like "https://webbkoll.dataskydd.net/en/status?id=<...>"
     # Matches "https://webbkoll.dataskydd.net/<word>/status"
     return re.match(rf'{WEBBKOLL_URL}/\w+/status', url)
+
 
 def preload_webbkoll_form(request):
     """
@@ -71,6 +77,7 @@ def preload_webbkoll_form(request):
         callback=submit_webbkoll_form,
         cb_kwargs={'url': request.url},
         dont_filter=True)
+
 
 def submit_webbkoll_form(webbkoll_form: Response, **formdata: dict) -> Request:
     # Submits preloaded Webbkoll <form> with the given `formdata`.

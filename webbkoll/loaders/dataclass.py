@@ -12,8 +12,7 @@ class DataclassHelper(ABC):
     @property
     @abstractmethod
     def dataclass(self):
-        """Should return one of the dataclasses defined in `items.py`."""
-        pass
+        raise NotImplementedError("Sould return a dataclass from `items.py`")
 
     @property
     def field_names(self):
@@ -25,8 +24,7 @@ class DataclassLoader(ItemLoader, DataclassHelper):
     Using the `ItemLoader` pollutes a dataclass declaration for a scrapy item.
     See: https://docs.scrapy.org/en/latest/topics/loaders.html#working-with-dataclass-items
 
-    This loader allows to keep dataclasses pure and frozen.
-    See `items.py`.
+    This loader allows to keep dataclasses pure and frozen. See `items.py`.
 
     In subclasses, you must override the `dataclass()` abstract property and
     define all methods needed to `populate()` objects, see the method below.

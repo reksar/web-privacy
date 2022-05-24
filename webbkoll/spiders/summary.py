@@ -29,5 +29,6 @@ class SummarySpider(Spider):
 def has_summary(response):
     return bool(len(response.css('#results-header')))
 
+
 def error_message(response):
     return remove_tags(response.css('.text').re_first('<p>Error:.*</p>'))

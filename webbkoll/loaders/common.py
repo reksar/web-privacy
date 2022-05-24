@@ -17,14 +17,12 @@ def html(body: str):
     return HtmlResponse(url='', body=body, encoding='utf-8')
 
 def find(pattern, html: Selector, group=0, default=''):
-
     try:
         # TODO: maybe use the `re_first()`?
         value = html.get()
         line = sanitize(value)
         match = re.search(pattern, line)
         return match.group(group)
-
     except (AttributeError, IndexError):
         return default
 
