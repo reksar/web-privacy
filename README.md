@@ -27,4 +27,4 @@ installing the required Python packages and editing the `urls.txt` manually.
 
 Use the `run.sh` as an example.
 
-**Note:** remove `--nolog` to debug from runners.
+**Note:** remove `--nolog` from runners to debug.
